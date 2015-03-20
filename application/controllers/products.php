@@ -9,45 +9,49 @@ class Products extends MY_Controller
     {
         parent::__construct();
         $this->load->model('model_products');
-
     }
 
     /**
-     * @param null $category
-     * @param null $product
+     * @param null $category_machine_name
+     * @param null $product_machine_name
      */
-    public function index($category = null, $product = null)
+    public function index($category_machine_name = null, $product_machine_name = null)
     {
-
         //Filter variable, check for injections
-        $category = $this->security->xss_clean($category);
-        $product = $this->security->xss_clean($product);
+        $category_machine_name = $this->security->xss_clean($category_machine_name);
+        $product_machine_name = $this->security->xss_clean($product_machine_name);
 
         //Show all categories, no category selected
-        if (is_null($category)) {
+        if (is_null($category_machine_name)) {
             $this->data['title'] = 'Our categories';
-            $cat = $this->model_products->getCategories();
-            if ($cat) {
-                $this->data['content'] = $this->parser->parse('parser/categories', $cat, TRUE);
+
+            $categories = $this->model_products->getCategories();
+
+            if (!is_null($categories)) {
+                $this->data['content'] = $this->parser->parse('parser/categories', $categories, TRUE);
             }
             return $this->_finishIt();
         }
 
-        //Show one category
-        if (is_null($product)) {
-            $prd = $this->model_products->getProducts($category);
-            if ($prd) {
-                $this->data['title'] = $prd['cat_name'] . 'Products';
-                $this->data['content'] = $this->parser->parse('parser/products', $prd, TRUE);
+        //We made it till here, so category was selected
+
+        //Check that the product was NOT selected
+        if (is_null($product_machine_name)) {
+            //get all products
+            $products = $this->model_products->getProductsWithCategory($category_machine_name);
+            if (!is_null($products)) {
+                $this->data['title'] = $products['cat_name'] . 'Products';
+                $this->data['content'] = $this->parser->parse('parser/products', $products, TRUE);
 
             }
             return $this->_finishIt();
         }
 
-        $item = $this->model_products->getItem($product);
-        if ($item) {
-            $this->data['title'] = $item['title'];
-            $this->data['content'] = $this->parser->parse('parser/item', $item, TRUE);
+        //get product by product machine name
+        $product = $this->model_products->getProduct($product_machine_name);
+        if (!is_null($product)) {
+            $this->data['title'] = $product['title'];
+            $this->data['content'] = $this->parser->parse('parser/item', $product, TRUE);
 
         }
 
