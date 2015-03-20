@@ -2,6 +2,8 @@
 
 /**
  * Class Products
+ *
+ * @property Model_products model_products
  */
 class Products extends MY_Controller
 {
