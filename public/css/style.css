@@ -1,0 +1,45 @@
+body {
+  margin: 0px;
+  padding: 0px;
+}
+
+div.site-wrapper {
+  margin-top: 20px;
+  margin-left: 20px;  
+}
+
+div.header h3,
+div.header ul,
+div.header ul li{
+ display: inline;   
+}
+div.header h3 {
+  color: #FFssFF;
+  font-size: 26px;
+}
+
+div.header ul {
+  padding: 0px;
+  list-style: none;
+  margin-left: 10px; 
+}
+
+div.header ul li {
+  padding-right: 15px;  
+}
+
+div.header ul li a {
+  color: #6969FF;
+  text-decoration: none;  
+}
+
+div.header ul li a:hover {
+  color: #FF00FF; 
+}
+
+div.footer { 
+  color:#5F7FF6; 
+}
+li#cart-item span{
+  position:relative;
+}
