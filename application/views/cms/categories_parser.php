@@ -1,6 +1,6 @@
 <select name="category">
-  
-  {categories}
-  <option value="{id}">{name}</option>
-  {/categories}
+
+    {categories}
+    <option value="{id}">{name}</option>
+    {/categories}
 </select>
