@@ -1,56 +1,69 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-class Model_cart extends CI_Model{
-  public function orderSave($order){
-    $uid=$this->session->userdata('uid');
-    $sql="INSERT INTO orders VALUES('','$order','$uid',NOW())";
-    $query=$this->db->query($sql);
-    $this->cart->destroy();
-     
-  }
-  
-  
-  public function addToCart($id){
-    
-     
-      $product = $this->getProductById($id);
-      
-      if( $product){
-        
-        $data=array(
-              'id' =>$id,
-              'qty' =>1,
-              'price' =>$product['price'],
-              'name' => $product['title']        
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+
+/**
+ * Class Model_cart
+ * @property Model_products $model_products
+ */
+class Model_cart extends CI_Model
+{
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->load->model('model_products');
+    }
+
+    /**
+     * Save order into the DB
+     *
+     * @param $order
+     */
+    public function orderSave($order)
+    {
+        $uid = $this->session->userdata('uid');
+
+        $sql = "INSERT INTO orders VALUES(?,?,NOW())";
+
+        $this->db->query($sql, array($order, $uid));
+        $this->cart->destroy();
+    }
+
+    /**
+     * Add product to cart,
+     * In case product already in cart - update it
+     *
+     * @param $id
+     * @return bool
+     */
+    public function addToCart($id)
+    {
+        $product = $this->model_products->getProductById($id);
+
+        if (is_null($product)) {
+            return false;
+        }
+
+        //prepare product data for insertion to cart
+        $data = array(
+            'id' => $id,
+            'qty' => 1,
+            'price' => $product['price'],
+            'name' => $product['title']
         );
-        
+
         //check if product in the cart
-       /*
-        $in_cart=false;
-               foreach ($this->cart->content() as $item) {
-                if($data['id']==$item['id']){
-                  $in_cart=true;
-                }   
-               }
-               if($in_cart)$this->cart->update($data);
-               else $this->cart->insert($data);
-               */
-       
-      }
-     
-  }
-  
-  private function getProductById($id){
-    
-     $product=null;
-     
-      $sql="SELECT  * FROM products WHERE id = ?";
-      $query = $this->db->query($sql, array($id));
-      
-      if( $query->num_rows() > 0){
-        
-        $product=$query->row_array();//budem ispolzovat v parser
-      }
-      return $product;
-      
-  }
+        $inCart = false;
+        foreach ($this->cart->contents() as $item) {
+            if ($data['id'] == $item['id']) {
+                $inCart = true;
+                break;
+            }
+        }
+
+        if ($inCart) {
+            return $this->cart->update($data);
+        }
+
+        return $this->cart->insert($data);
+    }
 }
