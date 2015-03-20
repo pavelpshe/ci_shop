@@ -48,7 +48,7 @@ class Products extends MY_Controller
         }
 
         //get product by product machine name
-        $product = $this->model_products->getProduct($product_machine_name);
+        $product = $this->model_products->getProductByMachineName($product_machine_name);
         if (!is_null($product)) {
             $this->data['title'] = $product['title'];
             $this->data['content'] = $this->parser->parse('parser/item', $product, TRUE);

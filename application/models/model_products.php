@@ -57,26 +57,44 @@ class Model_products extends CI_Model
     }
 
     /**
-     * Get
-     * @TODO Check what this function does
+     * Get Product data by product machine name
      *
      * @param $product_machine_name
      * @return mixed
      */
-    public function getProduct($product_machine_name)
+    public function getProductByMachineName($product_machine_name)
+    {
+        $sql = "SELECT * FROM products WHERE machine_name = ?";
+        return $this->_getProduct($sql, array($product_machine_name));
+    }
+
+    /**
+     * Get Product data by product id
+     *
+     * @param $id
+     * @return mixed
+     */
+    public function getProductById($id)
+    {
+        $sql = "SELECT  * FROM products WHERE id = ?";
+        return $this->_getProduct($sql, array($id));
+    }
+
+    /**
+     * Generic Function to fetch product data
+     *
+     * @param $sql - SQL to execute
+     * @param array $params - array of parameters to replace "?" in SQL
+     * @return mixed
+     */
+    protected function _getProduct($sql, array $params)
     {
         $product = null;
-        $sql = "SELECT  *
-                FROM products
-                WHERE machine_name = ?";
-
-        $query = $this->db->query($sql, array($product_machine_name));
+        $query = $this->db->query($sql, $params);
 
         if ($query->num_rows() > 0) {
-            //budem ispolzovat v parser
             $product = $query->row_array();
         }
         return $product;
-
     }
 }
